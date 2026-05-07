@@ -1,5 +1,6 @@
 #pragma once
 #include "gfx/window.hpp"
+#include "gfx/pipeline.hpp"
 
 namespace engine
 {
@@ -13,5 +14,6 @@ namespace engine
 		static constexpr int HEIGHT = 800;
 	private:
 		Window window;
+		Pipeline pipeline;
 	};
 }

@@ -7,7 +7,9 @@
 namespace engine
 {
 	App::App()
-		: window(WIDTH, HEIGHT, "Vulkan Window")
+		: 
+		window(WIDTH, HEIGHT, "Vulkan Window"),
+		pipeline("shaders/basic.vert.spv", "shaders/basic.frag.spv")
 	{ }
 
 	void App::run()
