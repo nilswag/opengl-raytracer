@@ -7,11 +7,11 @@
 #include "shader.h"
 #include "../util/io.h"
 
-GLuint Shader::compileShader(const std::string& src, GLenum type)
+GLuint shader::compile_shader (const std::string& src, GLenum type)
 {
 	GLuint id = glCreateShader(type);
-	const GLchar* srcStr = static_cast<const GLchar*>(src.c_str());
-	glShaderSource(id, 1, &srcStr, nullptr);
+	const GLchar* src_str = static_cast<const GLchar*>(src.c_str());
+	glShaderSource(id, 1, &src_str, nullptr);
 	glCompileShader(id);
 
 	std::string tag = "N/A";
@@ -26,7 +26,7 @@ GLuint Shader::compileShader(const std::string& src, GLenum type)
 	}
 
 	if (src == "")
-		spdlog::warn("Compiling shader with empty src ({}:{})", m_tag, tag);
+		spdlog::warn("Compiling shader with empty src ({}:{})", tag, tag);
 
 	GLint success;
 	glGetShaderiv(id, GL_COMPILE_STATUS, &success);
@@ -39,83 +39,83 @@ GLuint Shader::compileShader(const std::string& src, GLenum type)
 
 		glGetShaderInfoLog(id, log.size(), nullptr, log.data());
 		
-		spdlog::error("Unable to compile shader ({}:{}):\n{}", m_tag, tag, log);
+		spdlog::error("Unable to compile shader ({}:{}):\n{}", tag, tag, log);
 		return id;
 	}
 
-	spdlog::trace("Compiled shader ({}:{})", m_tag, tag);
+	spdlog::trace("Compiled shader ({}:{})", tag, tag);
 	return id;
 }
 
-Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& tag)
-	: m_id(0), m_tag(tag)
+shader::shader(const std::string& vertex_path, const std::string& fragment_path, const std::string& tag)
+	: id(0), tag(tag)
 {
-	std::string vertexSrc = readFile(vertexPath);
-	std::string fragmentSrc = readFile(fragmentPath);
+	std::string vertex_src = readFile(vertex_path);
+	std::string fragment_src = readFile(fragment_path);
 	
-	GLuint vertexShader = compileShader(vertexSrc, GL_VERTEX_SHADER);
-	GLuint fragmentShader = compileShader(fragmentSrc, GL_FRAGMENT_SHADER);
+	GLuint vertex_shader = compile_shader(vertex_src, GL_VERTEX_SHADER);
+	GLuint fragment_shader = compile_shader(fragment_src, GL_FRAGMENT_SHADER);
 	
-	m_id = glCreateProgram();
-	glAttachShader(m_id, vertexShader);
-	glAttachShader(m_id, fragmentShader);
-	glLinkProgram(m_id);
+	id = glCreateProgram();
+	glAttachShader(id, vertex_shader);
+	glAttachShader(id, fragment_shader);
+	glLinkProgram(id);
 
 	GLint success;
-	glGetProgramiv(m_id, GL_LINK_STATUS, &success);
+	glGetProgramiv(id, GL_LINK_STATUS, &success);
 	if (!success)
 	{
 		GLint length;
-		glGetProgramiv(m_id, GL_INFO_LOG_LENGTH, &length);
+		glGetProgramiv(id, GL_INFO_LOG_LENGTH, &length);
 		std::string log;
 		log.resize(length);
 
-		glGetProgramInfoLog(m_id, log.size(), nullptr, log.data());
+		glGetProgramInfoLog(id, log.size(), nullptr, log.data());
 
-		spdlog::error("Unable to link shader program ({}):\n{}", m_id, log);
+		spdlog::error("Unable to link shader program ({}):\n{}", id, log);
 	}
 
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	glDeleteShader(vertex_shader);
+	glDeleteShader(fragment_shader);
 }
 
-Shader::~Shader()
+shader::~shader()
 {
-	glDeleteProgram(m_id);
+	glDeleteProgram(id);
 }
 
-void Shader::setVec2(const std::string& name, const glm::vec2& value) const
+void shader::set_vec2(const std::string& name, const glm::vec2& value) const
 {
-	if (!hasUniform(name)) return;
-	glUniform2fv(m_uniforms.at(name), 1, glm::value_ptr(value));
+	if (!has_uniform(name)) return;
+	glUniform2fv(uniforms.at(name), 1, glm::value_ptr(value));
 }
 
-void Shader::setVec3(const std::string& name, const glm::vec3& value) const
+void shader::set_vec3(const std::string& name, const glm::vec3& value) const
 {
-	if (!hasUniform(name)) return;
-	glUniform3fv(m_uniforms.at(name), 1, glm::value_ptr(value));
+	if (!has_uniform(name)) return;
+	glUniform3fv(uniforms.at(name), 1, glm::value_ptr(value));
 }
 
-void Shader::setVec4(const std::string& name, const glm::vec4& value) const
+void shader::set_vec4(const std::string& name, const glm::vec4& value) const
 {
-	if (!hasUniform(name)) return;
-	glUniform4fv(m_uniforms.at(name), 1, glm::value_ptr(value));
+	if (!has_uniform(name)) return;
+	glUniform4fv(uniforms.at(name), 1, glm::value_ptr(value));
 }
 
-void Shader::setMat2(const std::string& name, const glm::mat2& value) const
+void shader::set_mat2(const std::string& name, const glm::mat2& value) const
 {
-	if (!hasUniform(name)) return;
-	glUniformMatrix2fv(m_uniforms.at(name), 1, GL_FALSE, glm::value_ptr(value));
+	if (!has_uniform(name)) return;
+	glUniformMatrix2fv(uniforms.at(name), 1, GL_FALSE, glm::value_ptr(value));
 }
 
-void Shader::setMat3(const std::string& name, const glm::mat3& value) const
+void shader::set_mat3(const std::string& name, const glm::mat3& value) const
 {
-	if (!hasUniform(name)) return;
-	glUniformMatrix3fv(m_uniforms.at(name), 1, GL_FALSE, glm::value_ptr(value));
+	if (!has_uniform(name)) return;
+	glUniformMatrix3fv(uniforms.at(name), 1, GL_FALSE, glm::value_ptr(value));
 }
 
-void Shader::setMat4(const std::string& name, const glm::mat4& value) const
+void shader::set_mat4(const std::string& name, const glm::mat4& value) const
 {
-	if (!hasUniform(name)) return;
-	glUniformMatrix4fv(m_uniforms.at(name), 1, GL_FALSE, glm::value_ptr(value));
+	if (!has_uniform(name)) return;
+	glUniformMatrix4fv(uniforms.at(name), 1, GL_FALSE, glm::value_ptr(value));
 }

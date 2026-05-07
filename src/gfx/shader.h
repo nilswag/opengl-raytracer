@@ -5,32 +5,32 @@
 #include <spdlog/spdlog.h>
 #include <glm/glm.hpp>
 
-class Shader
+class shader
 {
 public:
-	Shader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& tag);
-	~Shader();
+	shader(const std::string& vertex_path, const std::string& fragment_path, const std::string& tag);
+	~shader();
 
-	inline GLuint getId() const { return m_id; }
+	inline GLuint getId() const { return id; }
 
-	void setVec2(const std::string& name, const glm::vec2& value) const;
-	void setVec3(const std::string& name, const glm::vec3& value) const;
-	void setVec4(const std::string& name, const glm::vec4& value) const;
+	void set_vec2(const std::string& name, const glm::vec2& value) const;
+	void set_vec3(const std::string& name, const glm::vec3& value) const;
+	void set_vec4(const std::string& name, const glm::vec4& value) const;
 
-	void setMat2(const std::string& name, const glm::mat2& value) const;
-	void setMat3(const std::string& name, const glm::mat3& value) const;
-	void setMat4(const std::string& name, const glm::mat4& value) const;
+	void set_mat2(const std::string& name, const glm::mat2& value) const;
+	void set_mat3(const std::string& name, const glm::mat3& value) const;
+	void set_mat4(const std::string& name, const glm::mat4& value) const;
 
 private:
-	std::map<std::string, GLint> m_uniforms;
-	std::string m_tag;
-	GLuint m_id;
+	std::map<std::string, GLint> uniforms;
+	std::string tag;
+	GLuint id;
 
-	GLuint compileShader(const std::string& src, GLenum type);
+	GLuint compile_shader(const std::string& src, GLenum type);
 
-	inline bool hasUniform(const std::string& name) const
+	inline bool has_uniform(const std::string& name) const
 	{
-		if (m_uniforms.contains(name)) return true;
+		if (uniforms.contains(name)) return true;
 		spdlog::error("Uniform does not exist: {}", name);
 		return false;
 	}
