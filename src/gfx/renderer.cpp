@@ -4,16 +4,16 @@
 
 #include "renderer.h"
 
-QuadInstance::QuadInstance(const glm::vec2& pos, const glm::vec2& size, float rotation, const glm::vec4& color)
-	: m_color(color)
+quad_instance::quad_instance(const glm::vec2& pos, const glm::vec2& size, float rotation, const glm::vec4& color)
+	: color(color)
 {
-	m_model = glm::translate(m_model, glm::vec3(pos, 0.0f));
-	m_model = glm::rotate(m_model, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-	m_model = glm::scale(m_model, glm::vec3(size, 1.0f));
+	model = glm::translate(model, glm::vec3(pos, 0.0f));
+	model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+	model = glm::scale(model, glm::vec3(size, 1.0f));
 }
 
-Renderer::Renderer()
-	: m_quadShader("shaders/quad/vertex.glsl", "shaders/quad/fragment.glsl", "Quad")
+renderer::renderer()
+	: quad_shader("shaders/quad/vertex.glsl", "shaders/quad/fragment.glsl", "Quad")
 {
 	static float vertices[] = {
 		-0.5f, -0.5f, 0.0f,
@@ -27,21 +27,21 @@ Renderer::Renderer()
 		0, 2, 3
 	};
 
-	glCreateVertexArrays(1, &m_quadVao);
+	glCreateVertexArrays(1, &quad_vao);
 
-	GLuint quadVbo, quadEbo;
+	GLuint quad_vbo, quad_ebo;
 
-	glCreateBuffers(1, &quadVbo);
-	glNamedBufferStorage(quadVbo, sizeof(vertices), vertices, GL_MAP_READ_BIT);
+	glCreateBuffers(1, &quad_vbo);
+	glNamedBufferStorage(quad_vbo, sizeof(vertices), vertices, GL_MAP_READ_BIT);
 
 }
 
-void Renderer::renderQuad(const QuadInstance& instance)
+void renderer::render_quad(const quad_instance& instance)
 {
-	m_quads.push_back(instance);
+	quads.push_back(instance);
 }
 
-void Renderer::flush()
+void renderer::flush()
 {
 
 }

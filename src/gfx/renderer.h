@@ -5,23 +5,23 @@
 
 #include "shader.h"
 
-struct QuadInstance
+struct quad_instance
 {
-	QuadInstance(const glm::vec2& pos, const glm::vec2& size, float rotation, const glm::vec4& color);
+	quad_instance(const glm::vec2& pos, const glm::vec2& size, float rotation, const glm::vec4& color);
 
-	glm::mat4 m_model;
-	glm::vec4 m_color;
+	glm::mat4 model;
+	glm::vec4 color;
 };
 
-class Renderer
+class renderer
 {
 public:	
-	Renderer();
-	void renderQuad(const QuadInstance& instance);
+	renderer();
+	void render_quad(const quad_instance& instance);
 	void flush();
 
 private:
-	std::vector<QuadInstance> m_quads;
-	Shader m_quadShader;
-	GLuint m_quadVao;
+	std::vector<quad_instance> quads;
+	Shader quad_shader;
+	GLuint quad_vao;
 };
