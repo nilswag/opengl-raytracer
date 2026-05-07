@@ -4,32 +4,32 @@
 
 #include "app.h"
 
-App::App()
-	: m_window(1280, 720, "platformer"), m_dt(0.0f)
+app::app()
+	: window(1280, 720, "platformer"), dt(0.0f)
 { }
 
-void App::run()
+void app::run()
 {
 	float timer = 0.0f;
 	float sum = 0.0f;
 	int count = 0;
 
 	auto last = std::chrono::high_resolution_clock::now();
-	while (!m_window.shouldClose())
+	while (!window.should_close())
 	{
 		auto first = std::chrono::high_resolution_clock::now();
-		m_dt = std::chrono::duration<float>(first - last).count();
+		dt = std::chrono::duration<float>(first - last).count();
 		last = first;
 
-		timer += m_dt;
-		sum += m_dt;
+		timer += dt;
+		sum += dt;
 		count++;
 
 		if (timer >= 1.0f)
 		{
-			float avgDt = sum / count;
-			float avgFps = 1.0f / avgDt;
-			spdlog::info("Avg fps: {:<6.1f} | Avg dt: {:.2f}ms", avgFps, avgDt * 1e3);
+			float avg_dt = sum / count;
+			float avg_fps = 1.0f / avg_dt;
+			spdlog::info("Avg fps: {:<6.1f} | Avg dt: {:.2f}ms", avg_fps, avg_dt * 1e3);
 
 			sum = 0.0f;
 			count = 0;
@@ -39,7 +39,7 @@ void App::run()
 		float color [4] = { 0 };
 		glClearNamedFramebufferfv(0, GL_COLOR, 0, color);
 
-		m_window.swapBuffers();
-		m_window.pollEvents();
+		window.swap_buffers();
+		window.poll_events();
 	}
 }

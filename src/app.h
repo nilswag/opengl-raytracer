@@ -2,20 +2,20 @@
 #include "gfx/renderer.h"
 #include "gfx/window.h"
 
-class App
+class app
 {
 public:
-	App();
+	app();
 
 	void run();
 
-	inline float getDt() const
+	inline float get_dt() const
 	{
-		return m_dt;
+		return dt;
 	}
 
 private:
-	Window m_window;
-	Renderer m_renderer;
-	float m_dt;
+	window window;
+	renderer renderer;
+	float dt;
 };

@@ -3,7 +3,7 @@
 #include <sstream>
 #include <spdlog/spdlog.h>
 
-inline std::string readFile(const std::string& path)
+inline std::string read_file(const std::string& path)
 {
 	spdlog::trace("Reading file with path {}", path);
 	std::string str;
