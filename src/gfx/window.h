@@ -2,40 +2,40 @@
 #include <string>
 #include <GLFW/glfw3.h>
 
-class Window
+class window
 {
 public:
-	Window(int width, int height, const std::string& title);
-	~Window();
+	window(int width, int height, const std::string& title);
+	~window();
 
-	inline void swapBuffers()
+	inline void swap_buffers()
 	{
-		glfwSwapBuffers(m_window);
+		glfwSwapBuffers(handle);
 	}
 
-	inline void pollEvents()
+	inline void poll_events()
 	{
 		glfwPollEvents();
 	}
 
-	inline int getWidth() const
+	inline int get_width() const
 	{
-		return m_width;
+		return width;
 	}
 
-	inline int getHeight() const
+	inline int get_height() const
 	{
-		return m_height;
+		return height;
 	}
 
-	inline bool shouldClose() const
+	inline bool should_close() const
 	{
-		return glfwWindowShouldClose(m_window);
+		return glfwWindowShouldClose(handle);
 	}
 
 private:
-	static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+	static void frame_buffer_size_callback(GLFWwindow* handle, int width, int height);
 
-	int m_width, m_height;
-	GLFWwindow* m_window;
+	int width, height;
+	GLFWwindow* handle;
 };

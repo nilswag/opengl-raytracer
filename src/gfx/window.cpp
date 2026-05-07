@@ -4,9 +4,9 @@
 
 #include "window.h"
 
-static void messageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param)
+static void message_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param)
 {
-	auto const srcStr = [source]() {
+	auto const src_str = [source]() {
 		switch (source)
 		{
 		case GL_DEBUG_SOURCE_API: return "API";
@@ -18,7 +18,7 @@ static void messageCallback(GLenum source, GLenum type, GLuint id, GLenum severi
 		}
 		}();
 
-	auto const typeStr = [type]() {
+	auto const type_str = [type]() {
 		switch (type)
 		{
 		case GL_DEBUG_TYPE_ERROR: return "ERROR";
@@ -31,7 +31,7 @@ static void messageCallback(GLenum source, GLenum type, GLuint id, GLenum severi
 		}
 		}();
 
-	spdlog::level::level_enum spdLevel = [severity]() {
+	spdlog::level::level_enum spd_level = [severity]() {
 		switch (severity)
 		{
 		case GL_DEBUG_SEVERITY_MEDIUM: return spdlog::level::level_enum::warn;
@@ -40,21 +40,21 @@ static void messageCallback(GLenum source, GLenum type, GLuint id, GLenum severi
 		}
 		}();
 
-	spdlog::log(spdLevel, "[{}:{}] {}", srcStr, typeStr, message);
+	spdlog::log(spd_level, "[{}:{}] {}", src_str, type_str, message);
 }
 
-void Window::framebufferSizeCallback(GLFWwindow* window, int width, int height)
+void window::frame_buffer_size_callback(GLFWwindow* handle, int width, int height)
 {
-	Window* ptr = static_cast<Window*>(glfwGetWindowUserPointer(window));
-	ptr->m_width = width;
-	ptr->m_height = height;
+	window* ptr = static_cast<window*>(glfwGetWindowUserPointer(handle));
+	ptr->width = width;
+	ptr->height = height;
 	glViewport(0, 0, width, height);
 
 	spdlog::debug("Window resized ({}x{})", width, height);
 }
 
-Window::Window(int width, int height, const std::string& title)
-	: m_width(width), m_height(height), m_window(nullptr)
+window::window(int width, int height, const std::string& title)
+	: width(width), height(height), handle(nullptr)
 {
 	if (!glfwInit())
 	{
@@ -66,14 +66,14 @@ Window::Window(int width, int height, const std::string& title)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	m_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
-	if (!m_window)
+	handle = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+	if (!handle)
 	{
 		spdlog::critical("Failed to initialize glfw window");
 		std::abort();
 	}
 
-	glfwMakeContextCurrent(m_window);
+	glfwMakeContextCurrent(handle);
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		spdlog::critical("Failed to initialize glad");
@@ -82,11 +82,11 @@ Window::Window(int width, int height, const std::string& title)
 
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-	glDebugMessageCallback(messageCallback, nullptr);
+	glDebugMessageCallback(message_callback, nullptr);
 
 	glViewport(0, 0, width, height);
-	glfwSetWindowUserPointer(m_window, this);
-	glfwSetFramebufferSizeCallback(m_window, framebufferSizeCallback);
+	glfwSetWindowUserPointer(handle, this);
+	glfwSetFramebufferSizeCallback(handle, frame_buffer_size_callback);
 
 	spdlog::info("Vendor: {}", (char*)glGetString(GL_VENDOR));
 	spdlog::info("Renderer: {}", (char*)glGetString(GL_RENDERER));
@@ -95,9 +95,9 @@ Window::Window(int width, int height, const std::string& title)
 	spdlog::debug("Window initialized ({}x{})", width, height);
 }
 
-Window::~Window()
+window::~window()
 {
-	glfwDestroyWindow(m_window);
+	glfwDestroyWindow(handle);
 	glfwTerminate();
 	spdlog::debug("Window deinitialized");
 }
