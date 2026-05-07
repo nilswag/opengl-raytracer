@@ -14,16 +14,15 @@ GLuint shader::compile_shader (const std::string& src, GLenum type)
 	glShaderSource(id, 1, &src_str, nullptr);
 	glCompileShader(id);
 
-	std::string tag = "N/A";
-	switch (type)
+	std::string tag = [type]()
 	{
-	case GL_VERTEX_SHADER:
-		tag = "Vertex";
-		break;
-	case GL_FRAGMENT_SHADER:
-		tag = "Fragment";
-		break;
-	}
+		switch (type)
+		{
+		case GL_VERTEX_SHADER: return "Vertex";
+		case GL_FRAGMENT_SHADER: return "Fragment";
+		default: return "Unknown";
+		}
+	}();
 
 	if (src == "")
 		spdlog::warn("Compiling shader with empty src ({}:{})", tag, tag);

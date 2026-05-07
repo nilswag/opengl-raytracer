@@ -6,7 +6,8 @@
 
 static void message_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param)
 {
-	auto const src_str = [source]() {
+	auto const src_str = [source]() 
+	{
 		switch (source)
 		{
 		case GL_DEBUG_SOURCE_API: return "API";
@@ -15,10 +16,12 @@ static void message_callback(GLenum source, GLenum type, GLuint id, GLenum sever
 		case GL_DEBUG_SOURCE_THIRD_PARTY: return "THIRD PARTY";
 		case GL_DEBUG_SOURCE_APPLICATION: return "APPLICATION";
 		case GL_DEBUG_SOURCE_OTHER: return "OTHER";
+		default: return "UNKNOWN";
 		}
-		}();
+	}();
 
-	auto const type_str = [type]() {
+	auto const type_str = [type]() 
+		{
 		switch (type)
 		{
 		case GL_DEBUG_TYPE_ERROR: return "ERROR";
@@ -28,17 +31,19 @@ static void message_callback(GLenum source, GLenum type, GLuint id, GLenum sever
 		case GL_DEBUG_TYPE_PERFORMANCE: return "PERFORMANCE";
 		case GL_DEBUG_TYPE_MARKER: return "MARKER";
 		case GL_DEBUG_TYPE_OTHER: return "OTHER";
+		default: return "UNKNOWN";
 		}
-		}();
+	}();
 
-	spdlog::level::level_enum spd_level = [severity]() {
+	spdlog::level::level_enum spd_level = [severity]() 
+		{
 		switch (severity)
 		{
 		case GL_DEBUG_SEVERITY_MEDIUM: return spdlog::level::level_enum::warn;
-		case GL_DEBUG_SEVERITY_HIGH: return spdlog::level::level_enum::critical;
+		case GL_DEBUG_SEVERITY_HIGH: return spdlog::level::level_enum::err;
 		default: return spdlog::level::level_enum::debug;
 		}
-		}();
+	}();
 
 	spdlog::log(spd_level, "GL Log: [{}:{}] {}", src_str, type_str, message);
 }
