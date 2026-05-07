@@ -7,10 +7,10 @@
 #include "shader.h"
 #include "../util/io.h"
 
-GLuint Shader::compileShader(const std::string& src, GLenum type)
+unsigned int Shader::compileShader(const std::string& src, GLenum type)
 {
-	GLuint id = glCreateShader(type);
-	const GLchar* srcStr = static_cast<const GLchar*>(src.c_str());
+	unsigned int id = glCreateShader(type);
+	const char* srcStr = static_cast<const GLchar*>(src.c_str());
 	glShaderSource(id, 1, &srcStr, nullptr);
 	glCompileShader(id);
 
@@ -28,12 +28,12 @@ GLuint Shader::compileShader(const std::string& src, GLenum type)
 	if (src == "")
 		spdlog::warn("Compiling shader with empty src ({}:{})", m_tag, tag);
 
-	GLint success;
+	int success;
 	glGetShaderiv(id, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
 		std::string log;
-		GLint length;
+		int length;
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
 		log.resize(length);
 
@@ -53,19 +53,19 @@ Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath, c
 	std::string vertexSrc = readFile(vertexPath);
 	std::string fragmentSrc = readFile(fragmentPath);
 	
-	GLuint vertexShader = compileShader(vertexSrc, GL_VERTEX_SHADER);
-	GLuint fragmentShader = compileShader(fragmentSrc, GL_FRAGMENT_SHADER);
+	unsigned int vertexShader = compileShader(vertexSrc, GL_VERTEX_SHADER);
+	unsigned int fragmentShader = compileShader(fragmentSrc, GL_FRAGMENT_SHADER);
 	
 	m_id = glCreateProgram();
 	glAttachShader(m_id, vertexShader);
 	glAttachShader(m_id, fragmentShader);
 	glLinkProgram(m_id);
 
-	GLint success;
+	int success;
 	glGetProgramiv(m_id, GL_LINK_STATUS, &success);
 	if (!success)
 	{
-		GLint length;
+		int length;
 		glGetProgramiv(m_id, GL_INFO_LOG_LENGTH, &length);
 		std::string log;
 		log.resize(length);

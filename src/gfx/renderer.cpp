@@ -10,3 +10,31 @@ QuadInstance::QuadInstance(const glm::vec2& pos, const glm::vec2& size, float ro
 	m_model = glm::rotate(m_model, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 	m_model = glm::scale(m_model, glm::vec3(size, 1.0f));
 }
+
+Renderer::Renderer()
+	: m_quadShader("shaders/quad/vertex.glsl", "shaders/quad/fragment.glsl", "Quad")
+{
+	static float vertices[] = {
+		-0.5f, -0.5f, 0.0f,
+		 0.5f, -0.5f, 0.0f,
+		 0.5f,  0.5f, 0.0f,
+		-0.5f,  0.5f, 0.0f
+	};
+
+	static unsigned int indices[] = {
+		
+	};
+
+	glCreateVertexArrays(1, &m_quadVao);
+
+}
+
+void Renderer::renderQuad(const QuadInstance& instance)
+{
+	m_quads.push_back(instance);
+}
+
+void Renderer::flush()
+{
+
+}

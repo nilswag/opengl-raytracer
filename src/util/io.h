@@ -9,7 +9,7 @@ inline std::string readFile(const std::string& path)
 	std::string str;
 	std::string line;
 
-	std::ifstream f(path);
+	std::ifstream f("resources/" + path);
 	if (!f.is_open())
 	{
 		spdlog::error("Error while opening file ({})", path);

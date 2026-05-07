@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include <glad/glad.h>
 #include <map>
 #include <spdlog/spdlog.h>
 #include <glm/glm.hpp>
@@ -11,7 +10,7 @@ public:
 	Shader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& tag);
 	~Shader();
 
-	inline GLuint getId() const { return m_id; }
+	inline unsigned int getId() const { return m_id; }
 
 	void setVec2(const std::string& name, const glm::vec2& value) const;
 	void setVec3(const std::string& name, const glm::vec3& value) const;
@@ -24,9 +23,9 @@ public:
 private:
 	std::map<std::string, GLint> m_uniforms;
 	std::string m_tag;
-	GLuint m_id;
+	unsigned int m_id;
 
-	GLuint compileShader(const std::string& src, GLenum type);
+	unsigned int compileShader(const std::string& src, GLenum type);
 
 	inline bool hasUniform(const std::string& name) const
 	{

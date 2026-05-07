@@ -1,5 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <vector>
+
+#include "shader.h"
 
 struct QuadInstance
 {
@@ -11,5 +14,13 @@ struct QuadInstance
 
 class Renderer
 {
+public:	
+	Renderer();
+	void renderQuad(const QuadInstance& instance);
+	void flush();
 
+private:
+	std::vector<QuadInstance> m_quads;
+	Shader m_quadShader;
+	unsigned int m_quadVao;
 };
