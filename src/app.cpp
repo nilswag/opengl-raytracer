@@ -13,16 +13,8 @@ const std::vector<const char*> validationLayers = {
 const std::vector<const char*> validationLayers = { };
 #endif
 
-App::App(int width, int height, const std::string& title)
-	: instance(nullptr)
+void App::createInstance()
 {
-	glfwInit();
-
-	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
-	window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
-
 	vk::ApplicationInfo appInfo = { };
 	appInfo.pApplicationName = title.c_str();
 	appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
@@ -58,6 +50,24 @@ App::App(int width, int height, const std::string& title)
 	{
 		throw std::runtime_error("Required validation layer not supported: " + std::string(*unsupportedLayerIt));
 	}
+}
+
+std::vector<const char*> App::getRequiredInstanceExtentions()
+{
+
+}
+
+App::App(int width, int height, const std::string& title)
+	: width(width), height(height), title(title), instance(nullptr)
+{
+	glfwInit();
+
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+	window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+
+	createInstance();
 }
 
 App::~App()

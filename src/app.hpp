@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan_raii.hpp>
 
@@ -16,7 +17,13 @@ public:
 	void run();
 
 private:
+	void createInstance();
+	std::vector<const char*> getRequiredInstanceExtentions();
+
 	GLFWwindow* window;
 	vk::raii::Context context;
 	vk::raii::Instance instance;
+
+	std::string title;
+	int width, height;
 };
