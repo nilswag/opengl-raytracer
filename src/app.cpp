@@ -1,35 +1,10 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
-#include <iostream>
 #include <print>
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan.hpp>
 #include "app.hpp"
-
-static VKAPI_ATTR vk::Bool32 VKAPI_CALL debugCallback(
-	vk::DebugUtilsMessageSeverityFlagBitsEXT severity,
-	vk::DebugUtilsMessageTypeFlagBitsEXT type,
-	const vk::DebugUtilsMessengerCallbackDataEXT* pCallbackData,
-	void* puserData
-)
-{
-	// TODO: actually divide logging severity into sections
-
-	std::string typeStr = [type]() {
-			switch (type)
-			{
-			case vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral: return "GENERAL";
-			case vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation: return "VALIDATION";
-			case vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance: return "PERFORMANCE";
-			default: return "N/A";
-			}
-		}();
-
-	std::println(std::cerr, "validation layer: {} msg: {}", typeStr, pCallbackData->pMessage);
-
-	return vk::False;
-}
 
 #ifdef _DEBUG
 const std::vector<const char*> validationLayers = {
@@ -38,6 +13,34 @@ const std::vector<const char*> validationLayers = {
 #else
 const std::vector<const char*> validationLayers = { };
 #endif
+
+static VKAPI_ATTR vk::Bool32 VKAPI_CALL debugCallback(
+	vk::DebugUtilsMessageSeverityFlagBitsEXT severity,
+	vk::DebugUtilsMessageTypeFlagsEXT type,
+	const vk::DebugUtilsMessengerCallbackDataEXT* pCallbackData,
+	void* puserData
+)
+{
+	// TODO: actually divide logging severity into sections
+	std::string typeStr;
+
+	if (type & vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral)
+		typeStr += "GENERAL ";
+
+	if (type & vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation)
+		typeStr += "VALIDATION ";
+
+	if (type & vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance)
+		typeStr += "PERFORMANCE ";
+
+	if (typeStr.empty())
+		typeStr = "N/A";
+
+	std::println("validation layer: {} msg: {}", typeStr, pCallbackData->pMessage);
+
+	return vk::False;
+}
+
 
 void App::createInstance()
 {
@@ -100,7 +103,7 @@ std::vector<const char*> App::getRequiredInstanceExtentions()
 }
 
 App::App(int width, int height, const std::string& title)
-	: width(width), height(height), title(title), instance(nullptr)
+	: width(width), height(height), title(title), instance(nullptr), debugMessenger(nullptr)
 {
 	glfwInit();
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -110,7 +113,27 @@ App::App(int width, int height, const std::string& title)
 
 	createInstance();
 
+#ifdef _DEBUG
+	// setup debug callback
+	vk::DebugUtilsMessageSeverityFlagsEXT severityFlags(
+		vk::DebugUtilsMessageSeverityFlagBitsEXT::eError |
+		vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning |
+		vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose
+	);
 
+	vk::DebugUtilsMessageTypeFlagsEXT messageTypeFlags(
+		vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
+		vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance |
+		vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation
+	);
+
+	vk::DebugUtilsMessengerCreateInfoEXT debugUtilsMessengerCreateInfoEXT = {};
+	debugUtilsMessengerCreateInfoEXT.messageSeverity = severityFlags;
+	debugUtilsMessengerCreateInfoEXT.messageType = messageTypeFlags;
+	debugUtilsMessengerCreateInfoEXT.pfnUserCallback = &debugCallback;
+
+	debugMessenger = instance.createDebugUtilsMessengerEXT(debugUtilsMessengerCreateInfoEXT);
+#endif
 }
 
 App::~App()

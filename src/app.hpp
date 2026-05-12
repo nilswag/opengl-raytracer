@@ -23,6 +23,7 @@ private:
 	GLFWwindow* window;
 	vk::raii::Context context;
 	vk::raii::Instance instance;
+	vk::raii::DebugUtilsMessengerEXT debugMessenger;
 
 	std::string title;
 	int width, height;
