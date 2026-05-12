@@ -20,23 +20,26 @@ void App::createInstance()
 	appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
 	appInfo.apiVersion = vk::ApiVersion14;
 
-	unsigned int glfwExtensionCount = 0;
-	auto glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-
+	auto requiredExtensions = getRequiredInstanceExtentions();
 	auto extensionProperties = context.enumerateInstanceExtensionProperties();
-	for (unsigned int i = 0; i < glfwExtensionCount; i++)
+	auto unsupportedPropertyIt = std::ranges::find_if(requiredExtensions,
+		[&extensionProperties](const auto& requiredExtension) {
+			return std::ranges::none_of(extensionProperties, [requiredExtension](const auto& extensionProperty)
+				{
+					return strcmp(extensionProperty.extensionName, requiredExtension) == 0;
+				});
+		});
+	if (unsupportedPropertyIt != requiredExtensions.end())
 	{
-		if (std::ranges::none_of(extensionProperties, [glfwExtension = glfwExtensions[i]](const auto& extensionProperty)
-			{ return strcmp(extensionProperty.extensionName, glfwExtension) == 0; }))
-		{
-			throw std::runtime_error("Required GLFW extension is not supported: " + std::string(glfwExtensions[i]));
-		}
+		throw std::runtime_error("Required extension not supported: " + std::string(*unsupportedPropertyIt));
 	}
 
 	vk::InstanceCreateInfo createInfo = {};
 	createInfo.pApplicationInfo = &appInfo;
-	createInfo.enabledExtensionCount = glfwExtensionCount;
-	createInfo.ppEnabledExtensionNames = glfwExtensions;
+	createInfo.enabledLayerCount = validationLayers.size();
+	createInfo.ppEnabledLayerNames = validationLayers.data();
+	createInfo.enabledExtensionCount = requiredExtensions.size();
+	createInfo.ppEnabledExtensionNames = requiredExtensions.data();
 
 	instance = vk::raii::Instance(context, createInfo);
 
@@ -54,7 +57,10 @@ void App::createInstance()
 
 std::vector<const char*> App::getRequiredInstanceExtentions()
 {
+	unsigned int glfwExtensionCount = 0;
+	auto glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
+	return std::vector<const char*>(glfwExtensions, glfwExtensions + glfwExtensionCount);
 }
 
 App::App(int width, int height, const std::string& title)
