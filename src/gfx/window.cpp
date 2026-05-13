@@ -1,8 +1,15 @@
 #include <stdexcept>
 #include <string>
+#include <print>
+#include <iostream>
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include "window.h"
+
+static void glfwErrorCallback(int error, const char* description)
+{
+	std::println(std::cerr, "GLFW error ({}): {}", error, description);
+}
 
 Window::Window(int width, int height, const std::string& title)
 	: width(width), height(height)
@@ -22,11 +29,29 @@ Window::Window(int width, int height, const std::string& title)
 
 	if (!gladLoadGL(static_cast<GLADloadfunc>(glfwGetProcAddress)))
 		throw std::runtime_error("Unable to initialize glad");
+
+	glViewport(0, 0, width, height);
 }
 
 Window::~Window()
 {
-	if (window)
-		glfwDestroyWindow(window);
+	glfwDestroyWindow(window);
 	glfwTerminate();
+}
+
+bool Window::shouldClose() const
+{
+	return glfwWindowShouldClose(window);
+}
+
+void Window::pollEvents() const
+{
+	glfwPollEvents();
+}
+
+void Window::framebufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+	this->width = width;
+	this->height = height;
+	glViewport(0, 0, width, height);
 }

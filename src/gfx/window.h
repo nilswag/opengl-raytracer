@@ -8,7 +8,12 @@ public:
 	Window(int width, int height, const std::string& title);
 	~Window();
 
+	bool shouldClose() const;
+	void pollEvents() const;
+
 private:
+	void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+
 	GLFWwindow* window;
 	int width, height;
 };
