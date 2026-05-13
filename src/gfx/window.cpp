@@ -49,6 +49,11 @@ void Window::pollEvents() const
 	glfwPollEvents();
 }
 
+void Window::swapBuffers() const
+{
+	glfwSwapBuffers(window);
+}
+
 void Window::framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
 	this->width = width;
