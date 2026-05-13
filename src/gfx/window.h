@@ -10,6 +10,7 @@ public:
 
 	bool shouldClose() const;
 	void pollEvents() const;
+	void swapBuffers() const;
 
 private:
 	void framebufferSizeCallback(GLFWwindow* window, int width, int height);
