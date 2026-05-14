@@ -4,7 +4,7 @@
 #include <iostream>
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
-#include "window.h"
+#include "window.hpp"
 
 static void glfwErrorCallback(int error, const char* description)
 {
