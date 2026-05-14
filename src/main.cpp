@@ -1,5 +1,5 @@
 #include <glad/gl.h>
-#include "gfx/window.h"
+#include "gfx/window.hpp"
 
 int main()
 {
