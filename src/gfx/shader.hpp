@@ -12,7 +12,7 @@ public:
 	inline GLuint getPrograM() const { return program; }
 
 private:
-	GLuint compileShader(const std::string& path, GLenum type);
+	GLuint compileShader(const std::string& src, GLenum type);
 
 	GLuint program;
 };
