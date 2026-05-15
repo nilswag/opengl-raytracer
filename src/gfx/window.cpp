@@ -6,6 +6,11 @@
 #include <GLFW/glfw3.h>
 #include "window.hpp"
 
+static void APIENTRY glErrorCallback(GLenum source, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+{
+
+}
+
 static void glfwErrorCallback(int error, const char* description)
 {
 	std::println(std::cerr, "GLFW error ({}): {}", error, description);
