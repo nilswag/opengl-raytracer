@@ -57,6 +57,17 @@ Window::Window(int width, int height, const std::string& title)
 
 	if (!gladLoadGL(static_cast<GLADloadfunc>(glfwGetProcAddress)))
 		throw std::runtime_error("Unable to initialize glad");
+	
+#ifdef _DEBUG
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	glDebugMessageCallback(glErrorCallback, nullptr);
+	GLuint unusedIds = 0;
+	glDebugMessageControl(
+		GL_DONT_CARE,
+		GL_DONT_CARE,
+		
+	);
+#endif
 
 	glViewport(0, 0, width, height);
 }
