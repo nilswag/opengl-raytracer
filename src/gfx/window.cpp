@@ -1,7 +1,6 @@
 #include <stdexcept>
 #include <string>
 #include <print>
-#include <iostream>
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include "window.hpp"
@@ -31,12 +30,12 @@ static void APIENTRY glErrorCallback(GLenum source, GLenum type, GLuint id, GLen
 			}
 		}();
 
-	std::println("OpenGL error ({}): [{}:{}] {}", id, severityStr, typeStr, message);
+	std::println("OpenGL debug ({}): [{}:{}] {}", id, severityStr, typeStr, message);
 }
 
 static void glfwErrorCallback(int error, const char* description)
 {
-	std::println(std::cerr, "GLFW error ({}): {}", error, description);
+	std::println("GLFW error ({}): {}", error, description);
 }
 
 Window::Window(int width, int height, const std::string& title)
@@ -59,16 +58,20 @@ Window::Window(int width, int height, const std::string& title)
 		throw std::runtime_error("Unable to initialize glad");
 	
 #ifdef _DEBUG
+	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(glErrorCallback, nullptr);
 	GLuint unusedIds = 0;
 	glDebugMessageControl(
 		GL_DONT_CARE,
 		GL_DONT_CARE,
-		
+		GL_DONT_CARE,
+		0,
+		nullptr,
+		GL_TRUE
 	);
 #endif
-
+	glEnable(999999);
 	glViewport(0, 0, width, height);
 }
 
